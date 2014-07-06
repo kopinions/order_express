@@ -68,9 +68,13 @@ describe("Product", function () {
                             done(err);
                         }
                         result.should.have.property('id');
-                        result.historyPrices.length.should.be.eql(1);
                         res.get('location').should.eql('/products/' + result.id);
-                        done();
+                        result.historyPrices.length.should.be.eql(1);
+
+                        result.getCurrentPrice(function (err, price) {
+                            price.amount.should.eql(100);
+                            done();
+                        });
                     });
                 });
         });

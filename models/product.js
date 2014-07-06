@@ -1,5 +1,4 @@
 var mongoose = require("mongoose");
-//var Price = require('./price');
 
 var Schema = mongoose.Schema;
 
@@ -13,6 +12,12 @@ var Product = new Schema({
     description: {type: String},
     historyPrices: [Price]
 });
+
+Product.methods.getCurrentPrice = function (cb) {
+    return this.model('Product').find().sort('-historyPrices.effectDate').findOne().exec(function(err, result) {
+        cb(err, result.historyPrices[0])
+    });
+};
 
 var exports = mongoose.model("Product", Product);
 module.exports = exports;
