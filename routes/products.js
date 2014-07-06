@@ -7,7 +7,8 @@ router.get('/:id', function (req, res) {
         if(err || result === null) {
             return res.send(404);
         }
-        return res.send(200);
+        console.log(result);
+        return res.send(200, {name: result.name, description: result.description, uri: '/products/'+result.id});
     });
 });
 
