@@ -47,4 +47,13 @@ describe("Product", function () {
             });
         });
     });
+
+    describe("POST", function () {
+        it("should create product", function(done) {
+            request(app)
+                .post('/products')
+                .send({name: 'name', description: 'description', price: {price: 100}})
+                .expect(201, done);
+        })
+    });
 });
