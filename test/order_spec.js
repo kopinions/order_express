@@ -6,6 +6,7 @@ require("should");
 
 var Order = require('../models/order');
 var User = require("../models/user");
+var Product = require("../models/product");
 
 var app = require("../app");
 
@@ -72,22 +73,30 @@ describe("Order", function () {
 
     describe("POST", function () {
         var user;
+        var product;
 
         beforeEach(function (done) {
             user = new User({name: "sofia", phone: "13200000000"});
-            user.save(done);
+            user.save(function (err, result) {
+                if(err || !result) {
+                    return done(err);
+                }
+                product = new Product({name: 'productName', description: 'product description'});
+                product.save(done);
+            });
         });
 
         it("should create an order for user", function (done) {
             request(app)
                 .post("/users/" + user.id + "/orders")
-                .send({address: 'address', phone: '13200000000', name: 'kayla'})
+                .send({address: 'address', phone: '13200000000', name: 'kayla', orderItems: [{productId: product.id, quantity: 2}]})
                 .expect(201)
                 .end(function (err, res) {
                     res.get('location').should.be.match(/\/users\/.{24}\/orders\/.{24}/);
                     User.findById(user.id, function (err, user) {
-                        console.log(err, user);
                         user.orders.length.should.be.eql(1);
+                        user.orders[0].orderItems.length.should.be.eql(1);
+                        user.orders[0].orderItems[0].productId.toString().should.be.eql(product.id);
                         done();
                     });
                 });

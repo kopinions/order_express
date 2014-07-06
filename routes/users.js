@@ -30,10 +30,12 @@ router.post('/:user_id/orders', function (req, res) {
         if(err || !user) {
             return res.send(400);
         }
-        console.log(user);
-        console.log(user.orders);
-        console.log(typeof(user.orders))
         var order = new Order({address: req.param("address"), phone: req.param("phone"), name: req.param("name")});
+
+        req.param("orderItems").map(function(item) {
+            order.orderItems.push(item);
+        })
+
         user.orders.push(order);
         user.save(function (err, result) {
             res.location("/users/" + req.param("user_id") + "/orders/" + result.id);
