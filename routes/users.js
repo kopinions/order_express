@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var Order = require('../models/order');
 var User = require('../models/user');
+var Payment = require('../models/payment');
 
 
 /* GET users listing. */
@@ -53,7 +54,20 @@ router.post('/:user_id/orders', function (req, res) {
 });
 
 router.get('/:user_id/orders/:order_id/payment', function (req, res) {
-    res.send(200);
+
+    User.findOne({'orders._id': req.param("order_id")}, function (err, result) {
+        var order_uri = "/users/" + req.param("user_id") + "/orders/" + req.param("order_id");
+        var payment = Payment.findById(result.orders[0].payment, function (err, payment) {
+            res.send(200, {
+                uri: order_uri,
+                address: result.orders[0].address,
+                payment:
+                {
+                    uri: order_uri + "/payment",
+                    payType: payment.payType
+                }});
+        });
+    });
 });
 
 module.exports = router;
