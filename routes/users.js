@@ -14,13 +14,20 @@ router.get('/:user_id/orders/:order_id', function (req, res) {
         if (err || !user) {
             return res.send(404);
         }
-
-        Order.findById(req.param('order_id'), function (err, order) {
-            if(err || order === null) {
+        User.findOne({'orders._id': req.param('order_id')}, function (err, user) {
+            if(err || user === null) {
                 return res.send(404);
             }
-            var order_uri = '/users/' + req.param('user_id') + '/orders/' + order.id;
-            res.send(200, {order: {address: order.address, phone: order.phone, name: order.name, uri: order_uri}});
+            var order_uri = '/users/' + req.param('user_id') + '/orders/' + user.orders[0].id;
+
+            res.send(200, {order:
+                {
+                    address: user.orders[0].address,
+                    phone: user.orders[0].phone,
+                    name: user.orders[0].name,
+                    uri: order_uri,
+                    orderItems: user.orders[0].orderItems.map(function(item) { return {uri: order_uri + "/orderItems/" + item.id}})
+                }});
         });
     });
 });
@@ -32,9 +39,9 @@ router.post('/:user_id/orders', function (req, res) {
         }
         var order = new Order({address: req.param("address"), phone: req.param("phone"), name: req.param("name")});
 
-        req.param("orderItems").map(function(item) {
+        req.param("orderItems").map(function (item) {
             order.orderItems.push(item);
-        })
+        });
 
         user.orders.push(order);
         user.save(function (err, result) {

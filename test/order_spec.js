@@ -21,6 +21,7 @@ describe("Order", function () {
                 user = new User({name: "sofia", phone: "13200000000"});
                 user.save(done);
             });
+
             afterEach(function (done) {
                 mockgoose.reset();
                 done();
@@ -29,19 +30,31 @@ describe("Order", function () {
             describe("with exist order", function () {
                 var order;
                 beforeEach(function (done) {
-                    order = new Order({address: "address", name: "name", phone: "13200000000"});
-                    order.save(done);
+                    product = new Product({name: "productName", description: "description"});
+                    product.save(function (err, saveProduct) {
+                        order = new Order({address: "address", name: "name", phone: "13200000000"});
+                        order.orderItems.push({productId: saveProduct.id, quantity: 2});
+                        user.orders.push(order);
+                        user.save(function (err, user) {
+                            if(err) {
+                                done(err);
+                            }
+                            done();
+                        });
+                    });
                 });
                 it("should return 200", function (done) {
                     request(app)
                         .get("/users/" + user.id+ "/orders/" + order.id)
                         .expect(200)
                         .end(function(err, res) {
-                            res.body.should.have.property('order', {
-                                address: 'address',
-                                phone: '13200000000',
-                                name: 'name',
-                                uri: "/users/" + user.id+ "/orders/" + order.id});
+                            res.body.should.have.property('order');
+                            var o = res.body.order;
+                            o.address.should.be.eql('address');
+                            o.phone.should.be.eql('13200000000');
+                            o.name.should.be.eql('name');
+                            o.uri.should.be.eql("/users/" + user.id+ "/orders/" + order.id);
+                            o.orderItems.length.should.be.eql(1);
                             done();
                         });
                 });

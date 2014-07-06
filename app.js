@@ -9,9 +9,9 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var products = require('./routes/products');
 var app = express();
-
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/test');
+//
+//var mongoose = require('mongoose');
+//mongoose.connect('mongodb://localhost/test');
 
 
 // view engine setup
