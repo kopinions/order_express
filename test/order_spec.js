@@ -70,11 +70,16 @@ describe("Order", function () {
         });
     });
 
-    describe("POST", function() {
+    describe("POST", function () {
         it("should create an order for user", function (done) {
             request(app)
                 .post("/users/1/orders")
-                .expect(201, done);
+                .send({address: 'address', phone: '13200000000', name: 'kayla'})
+                .expect(201)
+                .end(function (err, res) {
+                    res.get('location').should.be.match(/\/users\/1\/orders\/.{24}/);
+                    done();
+                });
         });
-    })
+    });
 });
