@@ -10,7 +10,6 @@ router.get('/', function(req, res) {
 });
 
 router.get('/:user_id/orders/:order_id', function (req, res) {
-    console.log(req.param('user_id'));
     User.findById(req.param('user_id'), function (err, user) {
         if (err || !user) {
             return res.send(404);
@@ -24,8 +23,10 @@ router.get('/:user_id/orders/:order_id', function (req, res) {
             res.send(200, {order: {address: order.address, phone: order.phone, name: order.name, uri: order_uri}});
         });
     });
+});
 
-
+router.post('/:user_id/orders', function (req, res) {
+    res.send(201);
 });
 
 module.exports = router;

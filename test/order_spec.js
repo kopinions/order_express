@@ -69,4 +69,12 @@ describe("Order", function () {
             });
         });
     });
+
+    describe("POST", function() {
+        it("should create an order for user", function (done) {
+            request(app)
+                .post("/users/1/orders")
+                .expect(201, done);
+        });
+    })
 });
