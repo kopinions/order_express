@@ -31,6 +31,11 @@ describe("Product", function () {
                         done();
                     });
             });
+
+            afterEach(function (done) {
+                mockgoose.reset();
+                done();
+            });
         });
 
         describe("with none exist product", function () {
@@ -77,6 +82,11 @@ describe("Product", function () {
                         });
                     });
                 });
+        });
+
+        afterEach(function (done) {
+            mockgoose.reset();
+            done();
         });
     });
 });
