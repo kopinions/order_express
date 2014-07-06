@@ -49,11 +49,27 @@ describe("Product", function () {
     });
 
     describe("POST", function () {
-        it("should create product", function(done) {
+        beforeEach(function (done) {
+            mockgoose.reset();
+            done();
+        });
+
+        it("should create product", function (done) {
             request(app)
                 .post('/products')
                 .send({name: 'name', description: 'description', price: {price: 100}})
-                .expect(201, done);
-        })
+                .expect(201)
+                .expect('Location', /\/products\/.{24}/)
+                .end(function () {
+                    Product.count(function (err, count) {
+                        if (count === 1) {
+                            return done();
+                        }
+
+                        done('product should be 1 after create');
+                    })
+                });
+
+        });
     });
 });
