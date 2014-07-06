@@ -8,6 +8,9 @@ router.get('/', function(req, res) {
 
 router.get('/:user_id/orders/:order_id', function (req, res) {
     Order.findById(req.param('order_id'), function (err, order) {
+        if(err || order === null) {
+            return res.send(404);
+        }
         var order_uri = '/users/' + req.param('user_id') + '/orders/' + order.id;
         res.send(200, {order: {address: order.address, phone: order.phone, name: order.name, uri: order_uri}});
     });

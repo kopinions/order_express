@@ -37,6 +37,14 @@ describe("Order", function () {
                     done();
                 });
             });
+
+            describe("with non exist order", function() {
+                it("should return 404", function (done) {
+                    request(app)
+                        .get("/users/1/orders/aunexistedidinmongoosedb")
+                        .expect(404, done);
+                });
+            })
         });
 
     });
