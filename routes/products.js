@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var Product = require('../models/product');
-//var Price = require("../models/price");
 
 router.get('/:id', function (req, res) {
     return Product.findById(req.params.id, function(err, result) {
@@ -27,7 +26,6 @@ router.post('/', function (req, res) {
         res.location('/products/' + result.id);
         res.send(201);
     });
-
 });
 
 module.exports = router;

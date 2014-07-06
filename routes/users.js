@@ -52,4 +52,8 @@ router.post('/:user_id/orders', function (req, res) {
 
 });
 
+router.get('/:user_id/orders/:order_id/payment', function (req, res) {
+    res.send(200);
+});
+
 module.exports = router;
