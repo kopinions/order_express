@@ -57,19 +57,22 @@ describe("Product", function () {
         it("should create product", function (done) {
             request(app)
                 .post('/products')
-                .send({name: 'name', description: 'description', price: {price: 100}})
+                .send({name: 'name', description: 'description', price: {amount: 100, effectDate:"2014-01-01"}})
                 .expect(201)
-                .expect('Location', /\/products\/.{24}/)
-                .end(function () {
-                    Product.count(function (err, count) {
-                        if (count === 1) {
-                            return done();
+                .end(function (err, res) {
+                    if (err) {
+                        done(err);
+                    }
+                    Product.findOne({name: 'name'}, function(err, result) {
+                        if(err) {
+                            done(err);
                         }
-
-                        done('product should be 1 after create');
-                    })
+                        result.should.have.property('id');
+                        result.historyPrices.length.should.be.eql(1);
+                        res.get('location').should.eql('/products/' + result.id);
+                        done();
+                    });
                 });
-
         });
     });
 });

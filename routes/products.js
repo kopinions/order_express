@@ -12,7 +12,13 @@ router.get('/:id', function (req, res) {
 });
 
 router.post('/', function (req, res) {
-    var product = new Product({name: req.param('name'), description: req.param('description')});
+    var product = new Product({
+        name: req.param('name'),
+        description: req.param('description')
+    });
+
+    product.historyPrices.push(req.body.price);
+
     product.save(function(err, result) {
         if(err || result === null) {
             return res.send(400);
