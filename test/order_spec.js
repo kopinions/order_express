@@ -71,14 +71,25 @@ describe("Order", function () {
     });
 
     describe("POST", function () {
+        var user;
+
+        beforeEach(function (done) {
+            user = new User({name: "sofia", phone: "13200000000"});
+            user.save(done);
+        });
+
         it("should create an order for user", function (done) {
             request(app)
-                .post("/users/1/orders")
+                .post("/users/" + user.id + "/orders")
                 .send({address: 'address', phone: '13200000000', name: 'kayla'})
                 .expect(201)
                 .end(function (err, res) {
-                    res.get('location').should.be.match(/\/users\/1\/orders\/.{24}/);
-                    done();
+                    res.get('location').should.be.match(/\/users\/.{24}\/orders\/.{24}/);
+                    User.findById(user.id, function (err, user) {
+                        console.log(err, user);
+                        user.orders.length.should.be.eql(1);
+                        done();
+                    });
                 });
         });
     });

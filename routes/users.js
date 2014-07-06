@@ -26,11 +26,21 @@ router.get('/:user_id/orders/:order_id', function (req, res) {
 });
 
 router.post('/:user_id/orders', function (req, res) {
-    var order = new Order({address: req.param("address"), phone: req.param("phone"), name: req.param("name")});
-    order.save(function(err, result) {
-        res.location("/users/" + req.param("user_id") + "/orders/" + result.id);
-        res.send(201);
+    User.findById(req.param("user_id"), function (err, user) {
+        if(err || !user) {
+            return res.send(400);
+        }
+        console.log(user);
+        console.log(user.orders);
+        console.log(typeof(user.orders))
+        var order = new Order({address: req.param("address"), phone: req.param("phone"), name: req.param("name")});
+        user.orders.push(order);
+        user.save(function (err, result) {
+            res.location("/users/" + req.param("user_id") + "/orders/" + result.id);
+            res.send(201);
+        });
     });
+
 });
 
 module.exports = router;
