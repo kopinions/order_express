@@ -19,5 +19,4 @@ Product.methods.getCurrentPrice = function (cb) {
     });
 };
 
-var exports = mongoose.model("Product", Product);
-module.exports = exports;
+module.exports = mongoose.model("Product", Product);
